@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #87CEEB, #1E90FF);
+            height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        p {
+            text-align: center;
+            color: #555;
+            font-size: 1.2em;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .temperature-difference {
+            text-align: center;
+            font-size: 1.5em;
+            color: #E44D26; /* Change the color to your preference */
+            margin-top: 20px;
+        }
+        .weather-icon-container {
+            text-align: center;
+        }
+
+        .weather-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .weather-icon {
+            max-width: 64px;
+            max-height: 64px;
+            display: inline-block; /* Ensures proper centering */
+        }
+    </style>
+</head>
+<body>
+    <h2>Weather App</h2>
+    <form action="/echo_user_input" method="POST">
+        <input name="city1" placeholder="Enter city 1">
+        <input name="city2" placeholder="Enter city 2">
+        <input type="submit" value="Get Temperatures">
+    </form>
+
+    {% if temperatures %}
+        <p>Results:</p>
+
+        {% if temperature_difference is defined %}
+            <p class="temperature-difference">Temperature Difference: {{ temperature_difference }} °C</p>
+        {% endif %}
+    {% endif %}
+
+    {% if weather_info %}
+        <div class="weather-info">
+            {% for city, info in weather_info.items() %}
+                <div>
+                    <p>Weather Info for {{ city }}:</p>
+                    <p><strong>{{ info.text }}</strong></p>
+
+                    <!-- Center the weather icon using a container -->
+                    <div class="weather-icon-container">
+                        <img src="{{ info.icon }}" alt="Weather Icon" class="weather-icon">
+                    </div>
+
+                    <p>Temperature: {{ info.code }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</body>
+</html>
