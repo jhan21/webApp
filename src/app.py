@@ -2,30 +2,9 @@
 import requests
 import logging
 from flask import Flask, render_template, request, session
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 
 app = Flask(__name__)
 persistent_variable = 0
-
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Weather.sqlite3'
-
-'''
-Define the database model
-that is used to store 
-the temperature.
-'''
-
-db = SQLAlchemy(app)
-
-
-class Weather(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    datetime = db.Column(db.DateTime, default=datetime.utcnow())
-    temperature = db.Column(db.Integer, nullable=False)
-    city_name = db.Column(db.String(50), nullable=False)
-
 
 '''
 Helper function to get temperature
@@ -59,10 +38,7 @@ create a new object that we can add to the database.
 if __name__ == "__main__":
     current_temperature = get_temperature()
     current_city = "Boulder"
-    new_entry = Weather(temperature=current_temperature, city_name= current_city)
-    db.create_all()
-    db.session.add(new_entry)
-    db.session.commit()
+
 
 @app.route("/")
 def main():
@@ -73,15 +49,12 @@ def echo_input():
     global persistent_variable
     cities = [request.form.get("city1", ""), request.form.get("city2", "")]
     api_key = "53632e174b0242b7939183825230912"  # Replace with your actual API key
-    db.create_all()
     temperatures = []
     weather_info = {}
 
     for city in cities:
         current_temperature = get_temperature(api_key, city)
-        new_entry = Weather(id=persistent_variable, city_name=city, temperature=current_temperature)
-        db.session.add(new_entry)
-        db.session.commit()
+
         temperatures.append((city, current_temperature))
         persistent_variable = persistent_variable + 1
         weather_info[city] = get_weather_info(api_key, city)
